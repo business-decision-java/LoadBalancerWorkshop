@@ -1,0 +1,52 @@
+version: '3.9'
+
+services:
+
+  nginx:
+    image: nginx:latest
+    ports:
+    - "80:80"
+    volumes:
+    - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    networks:
+    - lb-bridge
+
+  service-1:
+    build: .
+    ports:
+    - '8081:8080'
+    environment:
+    - 'SERVER_PORT=8080'
+    - 'APP_NAME=Service 1'
+    - 'NGINX_URL=http://nginx'
+    networks:
+      lb-bridge:
+        ipv4_address: 172.20.1.1
+
+  service-2:
+    build: .
+    ports:
+    - '8082:8080'
+    environment:
+    - 'SERVER_PORT=8080'
+    - 'APP_NAME=Service 2'
+    - 'NGINX_URL=http://nginx'
+    networks:
+      lb-bridge:
+        ipv4_address: 172.20.0.2
+
+  load-generator:
+    image: loadimpact/k6
+    command: run -u 1000 -d 300s /tests/script.js
+    volumes:
+    - ./tests/load:/tests
+    environment:
+    - TARGET_URL=http://service-2:8080/delayed
+    profiles:
+    - loadgen
+
+networks:
+  lb-bridge:
+    ipam:
+      config:
+      - subnet: 172.20.0.0/16
