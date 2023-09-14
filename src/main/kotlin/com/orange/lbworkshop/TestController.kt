@@ -18,6 +18,9 @@ class TestController {
 
     @Value("\${nginx.url}")
     private lateinit var nginxUrl: String
+
+    @Value("\${info.app.name}")
+    private lateinit var appName: String
     
     @GetMapping("/delayed")
     fun delayedEndpoint(): String {
@@ -28,4 +31,9 @@ class TestController {
     @GetMapping("/forward-info")
     fun forwardInfo(): ResponseEntity<String> =
         restTemplate.getForEntity("$nginxUrl/actuator/info", String::class.java)
+
+    @GetMapping("/custom-info")
+    fun customInfo()=
+        "The app you're callig is $appName"
+    
 }
