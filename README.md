@@ -1,3 +1,8 @@
+# Requirements
+
+* Java 21
+* Docker-compose
+
 # Running Spring services
 
 1. Build project: `./gradlew bootJar`
