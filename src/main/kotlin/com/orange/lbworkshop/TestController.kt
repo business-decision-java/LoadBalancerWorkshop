@@ -24,7 +24,7 @@ class TestController {
     
     @GetMapping("/delayed")
     fun delayedEndpoint(): String {
-        TimeUnit.MINUTES.sleep(2)
+        TimeUnit.SECONDS.sleep(30)
         return "Response after delay"
     }
 
